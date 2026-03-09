@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Rummy Poker Score</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#121212;
+color:white;
+padding:20px;
+}
+
+button{
+padding:6px 10px;
+margin:4px;
+background:#333;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#555;
+}
+
+input{
+width:60px;
+text-align:center;
+}
+
+table{
+border-collapse:collapse;
+margin-top:20px;
+width:100%;
+}
+
+td,th{
+border:1px solid #444;
+padding:8px;
+text-align:center;
+}
+
+.total{
+background:#222;
+font-weight:bold;
+}
+
+.roundTitle{
+cursor:pointer;
+}
+
+</style>
+</head>
+
+
+<body>
+
+<h2>Poker Rummy Score</h2>
+
+<h3>Players</h3>
+<div id="players"></div>
+<button onclick="addPlayer()">Add Player</button>
+
+<h3>Rounds</h3>
+<button onclick="addRound()">Add Round (Generate Joker)</button>
+
+<table>
+
+<thead>
+<tr id="header">
+<th>Round</th>
+</tr>
+</thead>
+
+<tbody id="body"></tbody>
+
+<tfoot>
+<tr class="total" id="totalRow">
+<td>Total</td>
+</tr>
+</tfoot>
+
+</table>
+
+
+<script>
+
+let players=[]
+let rounds=[]
+
+let ranks=["A","2","3","4","5","6","7","8","9","10","J","Q","K"]
+let remainingRanks=[...ranks]
+
+let suits=["♠","♥","♦","♣"]
+
+let suitNames = {
+"♠":"begok",
+"♥":"love",
+"♦":"getas",
+"♣":"keriting"
+}
+
+function randomSuit(){
+
+return suits[Math.floor(Math.random()*4)]
+
+}
+
+
+
+function generateJoker(){
+
+if(remainingRanks.length===0){
+remainingRanks=[...ranks]
+}
+
+let index=Math.floor(Math.random()*remainingRanks.length)
+
+let rank=remainingRanks.splice(index,1)[0]
+
+let suit=randomSuit()
+
+return {rank,suit}
+
+}
+
+
+
+function addPlayer(){
+
+if(players.length>=5){
+alert("max 5 players")
+return
+}
+
+players.push("Player "+(players.length+1))
+
+renderPlayers()
+
+}
+
+
+
+function deletePlayer(i){
+
+players.splice(i,1)
+
+rounds.forEach(r=>r.scores.splice(i,1))
+
+renderPlayers()
+
+}
+
+
+
+function renamePlayer(i,val){
+
+players[i]=val
+
+renderTable()
+
+}
+
+
+
+function renderPlayers(){
+
+let div=document.getElementById("players")
+
+div.innerHTML=""
+
+players.forEach((p,i)=>{
+
+div.innerHTML+=`
+<div>
+<input value="${p}" onchange="renamePlayer(${i},this.value)">
+<button onclick="deletePlayer(${i})">delete</button>
+</div>
+`
+
+})
+
+renderTable()
+
+}
+
+
+
+function addRound(){
+
+let joker=generateJoker()
+
+let scores=new Array(players.length).fill(0)
+
+rounds.push({
+name:joker.rank,
+joker:joker,
+scores:scores
+})
+
+renderTable()
+
+}
+
+
+
+function editRound(i){
+
+let name=prompt("Edit round name",rounds[i].name)
+
+if(name) rounds[i].name=name
+
+renderTable()
+
+}
+
+
+
+function setScore(r,p,val){
+
+rounds[r].scores[p]=parseInt(val)||0
+
+calculateTotals()
+
+}
+
+
+
+function renderTable(){
+
+let header=document.getElementById("header")
+let body=document.getElementById("body")
+let total=document.getElementById("totalRow")
+
+header.innerHTML="<th>Round</th>"
+total.innerHTML="<td>Total</td>"
+
+players.forEach(p=>{
+header.innerHTML+=`<th>${p}</th>`
+total.innerHTML+="<td>0</td>"
+})
+
+body.innerHTML=""
+
+rounds.forEach((r,ri)=>{
+
+let tr=document.createElement("tr")
+
+let title=`<td class="roundTitle" onclick="editRound(${ri})">
+${r.name} ${suitNames[r.joker.suit]}
+</td>`
+
+let cells=""
+
+players.forEach((p,pi)=>{
+
+cells+=`
+<td>
+<input value="${r.scores[pi]}" onchange="setScore(${ri},${pi},this.value)">
+</td>
+`
+
+})
+
+tr.innerHTML=title+cells
+
+body.appendChild(tr)
+
+})
+
+calculateTotals()
+
+}
+
+
+
+function calculateTotals(){
+
+let totals=new Array(players.length).fill(0)
+
+rounds.forEach(r=>{
+r.scores.forEach((s,i)=>{
+totals[i]+=s
+})
+})
+
+let cells=document.querySelectorAll("#totalRow td")
+
+totals.forEach((t,i)=>{
+cells[i+1].innerText=t
+})
+
+}
+
+</script>
+
+</body>
+</html>
