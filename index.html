@@ -86,7 +86,6 @@ margin-bottom:8px;
 </style>
 </head>
 
-
 <body>
 
 <h2>Poker Rummy Score</h2>
@@ -135,9 +134,35 @@ let suitNames={
 }
 
 
+
+function saveData(){
+
+localStorage.setItem("pokerPlayers",JSON.stringify(players))
+localStorage.setItem("pokerRounds",JSON.stringify(rounds))
+localStorage.setItem("pokerRemainingRanks",JSON.stringify(remainingRanks))
+
+}
+
+
+
+function loadData(){
+
+let savedPlayers=localStorage.getItem("pokerPlayers")
+let savedRounds=localStorage.getItem("pokerRounds")
+let savedRanks=localStorage.getItem("pokerRemainingRanks")
+
+if(savedPlayers) players=JSON.parse(savedPlayers)
+if(savedRounds) rounds=JSON.parse(savedRounds)
+if(savedRanks) remainingRanks=JSON.parse(savedRanks)
+
+}
+
+
+
 function randomSuit(){
 return suits[Math.floor(Math.random()*4)]
 }
+
 
 
 function generateJoker(){
@@ -167,6 +192,7 @@ return
 
 players.push("Player "+(players.length+1))
 
+saveData()
 renderPlayers()
 
 }
@@ -179,6 +205,7 @@ players.splice(i,1)
 
 rounds.forEach(r=>r.scores.splice(i,1))
 
+saveData()
 renderPlayers()
 
 }
@@ -189,6 +216,7 @@ function renamePlayer(i,val){
 
 players[i]=val
 
+saveData()
 renderTable()
 
 }
@@ -230,6 +258,7 @@ joker:joker,
 scores:scores
 })
 
+saveData()
 renderTable()
 
 }
@@ -242,6 +271,7 @@ let name=prompt("Edit round name",rounds[i].name)
 
 if(name) rounds[i].name=name
 
+saveData()
 renderTable()
 
 }
@@ -252,6 +282,7 @@ function setScore(r,p,val){
 
 rounds[r].scores[p]=parseInt(val)||0
 
+saveData()
 calculateTotals()
 
 }
@@ -304,6 +335,8 @@ calculateTotals()
 
 }
 
+
+
 function calculateTotals(){
 
 let totals=new Array(players.length).fill(0)
@@ -321,6 +354,11 @@ cells[i+1].innerText=t
 })
 
 }
+
+
+
+loadData()
+renderPlayers()
 
 </script>
 
