@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Rummy Poker Score</title>
 
 <style>
@@ -10,17 +13,29 @@ body{
 font-family:Arial;
 background:#121212;
 color:white;
-padding:20px;
+padding:16px;
+font-size:16px;
+}
+
+h2{
+font-size:24px;
+margin-bottom:10px;
+}
+
+h3{
+margin-top:20px;
+margin-bottom:8px;
 }
 
 button{
-padding:6px 10px;
-margin:4px;
+padding:10px 14px;
+margin:6px 4px;
 background:#333;
 color:white;
 border:none;
-border-radius:6px;
+border-radius:8px;
 cursor:pointer;
+font-size:16px;
 }
 
 button:hover{
@@ -28,19 +43,27 @@ background:#555;
 }
 
 input{
-width:60px;
+width:100%;
+max-width:80px;
+padding:8px;
 text-align:center;
+font-size:16px;
+border-radius:6px;
+border:1px solid #555;
+background:#1b1b1b;
+color:white;
 }
 
 table{
 border-collapse:collapse;
 margin-top:20px;
 width:100%;
+font-size:16px;
 }
 
 td,th{
 border:1px solid #444;
-padding:8px;
+padding:10px;
 text-align:center;
 }
 
@@ -51,6 +74,13 @@ font-weight:bold;
 
 .roundTitle{
 cursor:pointer;
+}
+
+.playerRow{
+display:flex;
+gap:8px;
+align-items:center;
+margin-bottom:8px;
 }
 
 </style>
@@ -97,19 +127,17 @@ let remainingRanks=[...ranks]
 
 let suits=["♠","♥","♦","♣"]
 
-let suitNames = {
+let suitNames={
 "♠":"begok",
 "♥":"love",
 "♦":"getas",
 "♣":"keriting"
 }
 
+
 function randomSuit(){
-
 return suits[Math.floor(Math.random()*4)]
-
 }
-
 
 
 function generateJoker(){
@@ -176,7 +204,7 @@ div.innerHTML=""
 players.forEach((p,i)=>{
 
 div.innerHTML+=`
-<div>
+<div class="playerRow">
 <input value="${p}" onchange="renamePlayer(${i},this.value)">
 <button onclick="deletePlayer(${i})">delete</button>
 </div>
@@ -275,8 +303,6 @@ body.appendChild(tr)
 calculateTotals()
 
 }
-
-
 
 function calculateTotals(){
 
